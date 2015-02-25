@@ -2,10 +2,9 @@ define ["jquery"], ($) ->
   class Sticky
     constructor: (@elem, @offset) ->
       that = this
+      @offset ?= 0
       @offset = +@offset
       @elem.parent().css position: "relative"
-      @offsetTop = $(".top-dark-header").outerHeight() + 20
-      @footer = $(".main-footer")
       @position = {}
       @state = ''
       @topPossible = on
@@ -22,17 +21,15 @@ define ["jquery"], ($) ->
     getPosition: ->
       @position.top = @elem.offset().top - $(document).scrollTop()
       @position.bottom = $(window).innerHeight() - ( @elem.offset().top - $(document).scrollTop() + @elem.outerHeight() )
-      @position.offsetBottom = @elem.parent().innerHeight() - ( @elem.position().top + @elem.outerHeight() )
-      @position.reachedBottom = (@elem.offset().top - @elem.parent().offset().top) + @elem.outerHeight() >= @elem.parent().innerHeight() - @offset
+      @position.reachedBottom = (@elem.parent().offset().top + @elem.parent().innerHeight()) <= (@elem.offset().top + @elem.outerHeight()) 
       @topPossible = !($(window).innerHeight() < @elem.outerHeight() + @offset + @offsetTop)
-
-
+      #console.log @position
     stickTop: ->
       @state = "top"
       #console.log "stickTop"
       @elem.css {
         position: "fixed"
-        top: @offsetTop
+        top: @offset
         bottom: "auto"
       }
 
@@ -47,12 +44,13 @@ define ["jquery"], ($) ->
       }
 
     checkHeight: ->
-      return if @position.offsetBottom == 0 #return if touched bottom
       if @position.bottom <= @offset and @state != "bottom" 
         do @stick
       else if @position.reachedBottom and @state != "finish"
         do @finish
-      else if @position.top <= @offsetTop and @state != "top" and @state != "finish" and @topPossible
+      else if @position.top >= @offset and @state != "top" and @state == "finish"
+        do @stickTop
+      else if @position.top <= @offset and @state != "top" and @state != "finish" and @topPossible
         do @stickTop
       else if !@topPossible and @position.bottom >= @offset and @state != "bottom" and @state != "finish"
         do @stick

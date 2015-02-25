@@ -7,12 +7,13 @@
         this.elem = elem;
         this.offset = offset;
         that = this;
+        if (this.offset == null) {
+          this.offset = 0;
+        }
         this.offset = +this.offset;
         this.elem.parent().css({
           position: "relative"
         });
-        this.offsetTop = $(".top-dark-header").outerHeight() + 20;
-        this.footer = $(".main-footer");
         this.position = {};
         this.state = '';
         this.topPossible = true;
@@ -31,8 +32,7 @@
       Sticky.prototype.getPosition = function() {
         this.position.top = this.elem.offset().top - $(document).scrollTop();
         this.position.bottom = $(window).innerHeight() - (this.elem.offset().top - $(document).scrollTop() + this.elem.outerHeight());
-        this.position.offsetBottom = this.elem.parent().innerHeight() - (this.elem.position().top + this.elem.outerHeight());
-        this.position.reachedBottom = (this.elem.offset().top - this.elem.parent().offset().top) + this.elem.outerHeight() >= this.elem.parent().innerHeight() - this.offset;
+        this.position.reachedBottom = (this.elem.parent().offset().top + this.elem.parent().innerHeight()) <= (this.elem.offset().top + this.elem.outerHeight());
         return this.topPossible = !($(window).innerHeight() < this.elem.outerHeight() + this.offset + this.offsetTop);
       };
 
@@ -40,7 +40,7 @@
         this.state = "top";
         return this.elem.css({
           position: "fixed",
-          top: this.offsetTop,
+          top: this.offset,
           bottom: "auto"
         });
       };
@@ -56,14 +56,13 @@
       };
 
       Sticky.prototype.checkHeight = function() {
-        if (this.position.offsetBottom === 0) {
-          return;
-        }
         if (this.position.bottom <= this.offset && this.state !== "bottom") {
           this.stick();
         } else if (this.position.reachedBottom && this.state !== "finish") {
           this.finish();
-        } else if (this.position.top <= this.offsetTop && this.state !== "top" && this.state !== "finish" && this.topPossible) {
+        } else if (this.position.top >= this.offset && this.state !== "top" && this.state === "finish") {
+          this.stickTop();
+        } else if (this.position.top <= this.offset && this.state !== "top" && this.state !== "finish" && this.topPossible) {
           this.stickTop();
         } else if (!this.topPossible && this.position.bottom >= this.offset && this.state !== "bottom" && this.state !== "finish") {
           this.stick();
