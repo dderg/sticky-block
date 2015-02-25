@@ -56,6 +56,9 @@
       };
 
       Sticky.prototype.checkHeight = function() {
+        if (this.position.offsetBottom === 0) {
+          return;
+        }
         if (this.position.bottom <= this.offset && this.state !== "bottom") {
           this.stick();
         } else if (this.position.reachedBottom && this.state !== "finish") {

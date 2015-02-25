@@ -47,6 +47,7 @@ define ["jquery"], ($) ->
       }
 
     checkHeight: ->
+      return if @position.offsetBottom == 0 #return if touched bottom
       if @position.bottom <= @offset and @state != "bottom" 
         do @stick
       else if @position.reachedBottom and @state != "finish"
