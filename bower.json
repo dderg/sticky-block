@@ -1,0 +1,24 @@
+{
+  "name": "sticky-block",
+  "version": "0.0.1",
+  "authors": [
+    "prog666 <gnomdan@yandex.ru>"
+  ],
+  "description": "sticky block module",
+  "main": "sticky.js",
+  "keywords": [
+    "sticky"
+  ],
+  "license": "MIT",
+  "homepage": "github.com/prog666/",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "jquery": "~2.1.3"
+  }
+}
