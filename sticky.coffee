@@ -29,7 +29,6 @@ define ["jquery"], ($) ->
       @position.bottom = $(window).innerHeight() - ( @elem.offset().top - $(document).scrollTop() + @elem.outerHeight() )
       @position.reachedBottom = (@elem.parent().offset().top + @elem.parent().innerHeight()) <= (@elem.offset().top + @elem.outerHeight()) 
       @topPossible = !($(window).innerHeight() < @elem.outerHeight() + @offsetTop)
-      console.log @position
     stickTop: ->
       @state = "top"
       #console.log "stickTop"
