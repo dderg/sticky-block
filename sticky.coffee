@@ -4,7 +4,7 @@ define ["jquery"], ($) ->
       that = this
       @offsetTop ?= 0
       @offsetTop = +@offsetTop
-      @elem.parent().css position: "relative"
+      do @init
       @position = {}
       @state = ''
       @topPossible = on
@@ -18,6 +18,12 @@ define ["jquery"], ($) ->
       $(window).scroll scroll
       $(window).resize scroll
        
+    init: ->
+      @elem.parent().parent().css position: "relative"
+      @elem.parent().css position: "absolute", top: 0, bottom: 0
+
+
+
     getPosition: ->
       @position.top = @elem.offset().top - $(document).scrollTop()
       @position.bottom = $(window).innerHeight() - ( @elem.offset().top - $(document).scrollTop() + @elem.outerHeight() )
