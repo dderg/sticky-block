@@ -12,9 +12,12 @@
           this.offsetTop = 0;
         }
         this.offsetTop = +this.offsetTop;
+        if (this.width == null) {
+          this.width = 0;
+        }
+        this.state = '';
         this.init();
         this.position = {};
-        this.state = '';
         this.topPossible = true;
         this.getPosition();
         scroll = (function(_this) {
@@ -29,13 +32,21 @@
       }
 
       Sticky.prototype.init = function() {
+        this.width = this.elem.outerWidth();
+        if (this.elem.parent().outerHeight() === this.elem.parent().parent().height()) {
+          this.state = 'disable';
+          return;
+        }
         this.elem.parent().parent().css({
           position: "relative"
         });
-        return this.elem.parent().css({
+        this.elem.parent().css({
           position: "absolute",
           top: 0,
           bottom: 0
+        });
+        return this.elem.css({
+          width: this.width + "px"
         });
       };
 
@@ -51,7 +62,8 @@
         return this.elem.css({
           position: "fixed",
           top: this.offsetTop,
-          bottom: "auto"
+          bottom: "auto",
+          width: this.width + "px"
         });
       };
 
@@ -61,11 +73,15 @@
           position: "fixed",
           bottom: this.offsetBottom + "px",
           marginBottom: 0,
-          top: "auto"
+          top: "auto",
+          width: this.width + "px"
         });
       };
 
       Sticky.prototype.checkHeight = function() {
+        if (this.state === 'disable') {
+          return;
+        }
         if (this.position.bottom <= this.offsetBottom && this.state !== "bottom") {
           this.stick();
         } else if (this.position.reachedBottom && this.state !== "finish") {
@@ -84,7 +100,10 @@
 
       Sticky.prototype.unstick = function() {
         this.state = "none";
-        return this.elem.removeAttr("style");
+        this.elem.removeAttr("style");
+        return this.elem.css({
+          width: this.width + "px"
+        });
       };
 
       Sticky.prototype.finish = function() {
@@ -93,7 +112,8 @@
           position: "absolute",
           bottom: this.offsetBottom + "px",
           marginBottom: 0,
-          top: "auto"
+          top: "auto",
+          width: this.width + "px"
         });
       };
 

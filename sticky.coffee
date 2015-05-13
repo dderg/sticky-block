@@ -4,9 +4,12 @@ define ["jquery"], ($) ->
       that = this
       @offsetTop ?= 0
       @offsetTop = +@offsetTop
+      @width ?= 0
+      @state = ''
+
       do @init
       @position = {}
-      @state = ''
+      
       @topPossible = on
       @getPosition()
       
@@ -19,9 +22,15 @@ define ["jquery"], ($) ->
       $(window).resize scroll
        
     init: ->
+      @width = @elem.outerWidth()
+
+      if @elem.parent().outerHeight() == @elem.parent().parent().height()
+        @state = 'disable'
+        return
+
       @elem.parent().parent().css position: "relative"
       @elem.parent().css position: "absolute", top: 0, bottom: 0
-
+      @elem.css width: "#{@width}px"
 
 
     getPosition: ->
@@ -29,6 +38,8 @@ define ["jquery"], ($) ->
       @position.bottom = $(window).innerHeight() - ( @elem.offset().top - $(document).scrollTop() + @elem.outerHeight() )
       @position.reachedBottom = (@elem.parent().offset().top + @elem.parent().innerHeight()) <= (@elem.offset().top + @elem.outerHeight()) 
       @topPossible = !($(window).innerHeight() < @elem.outerHeight() + @offsetTop)
+      #console.log @position
+      #console.log @state
     stickTop: ->
       @state = "top"
       #console.log "stickTop"
@@ -36,6 +47,7 @@ define ["jquery"], ($) ->
         position: "fixed"
         top: @offsetTop
         bottom: "auto"
+        width: "#{@width}px"
       }
 
     stick: ->
@@ -46,9 +58,13 @@ define ["jquery"], ($) ->
         bottom: "#{@offsetBottom}px"
         marginBottom: 0
         top: "auto"
+        width: "#{@width}px"
       }
 
     checkHeight: ->
+      if @state == 'disable'
+        return
+
       if @position.bottom <= @offsetBottom and @state != "bottom" 
         do @stick
       else if @position.reachedBottom and @state != "finish"
@@ -70,6 +86,7 @@ define ["jquery"], ($) ->
       @state = "none"
       #console.log "unstick"
       @elem.removeAttr("style")
+      @elem.css width: "#{@width}px"
 
     finish: ->
       @state = "finish"
@@ -79,4 +96,5 @@ define ["jquery"], ($) ->
         bottom: "#{@offsetBottom}px"
         marginBottom: 0
         top: "auto"
+        width: "#{@width}px"
       }
